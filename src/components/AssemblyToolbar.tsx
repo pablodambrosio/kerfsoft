@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useKerfStore } from '../store/useKerfStore';
-import { Play, SlidersHorizontal } from 'lucide-react';
+import { Play } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export const AssemblyToolbar: React.FC = () => {
@@ -39,11 +39,10 @@ export const AssemblyToolbar: React.FC = () => {
   };
 
   return (
-    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/90 border border-slate-800 backdrop-blur-md rounded-2xl px-5 py-2.5 flex items-center gap-6 shadow-2xl z-20 select-none">
+    <div className="h-12 bg-slate-900 border-t border-slate-800 px-6 flex items-center justify-between select-none shrink-0 w-full z-20">
       {/* Exploded View Slider */}
       <div className="flex items-center gap-3">
-        <SlidersHorizontal className="w-4 h-4 text-amber-400" />
-        <span className="text-xs font-semibold text-slate-300">EXPLODED VIEW</span>
+        <span className="text-xs font-semibold text-slate-300">EXPLODE</span>
         <input
           type="range"
           min={0.0}
@@ -69,7 +68,7 @@ export const AssemblyToolbar: React.FC = () => {
         }`}
       >
         <Play className={`w-3.5 h-3.5 ${isPlayingAnimation ? 'animate-spin' : ''}`} />
-        <span>{isPlayingAnimation ? 'SIMULATING...' : 'TEST ASSEMBLY FIT'}</span>
+        <span>{isPlayingAnimation ? 'SIMULATING...' : 'EXPLODE'}</span>
       </button>
 
       <div className="w-px h-6 bg-slate-800" />
@@ -84,7 +83,7 @@ export const AssemblyToolbar: React.FC = () => {
               : 'text-slate-400 hover:text-white'
           }`}
         >
-          Shaded Wood
+          Shaded
         </button>
 
         <button
@@ -96,17 +95,6 @@ export const AssemblyToolbar: React.FC = () => {
           }`}
         >
           Wireframe
-        </button>
-
-        <button
-          onClick={() => setViewMode('kerf_preview')}
-          className={`px-3 py-1 text-xs font-semibold rounded-lg transition ${
-            viewMode === 'kerf_preview'
-              ? 'bg-rose-600 text-white shadow'
-              : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          Kerf Preview
         </button>
       </div>
     </div>

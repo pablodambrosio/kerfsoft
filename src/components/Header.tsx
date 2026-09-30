@@ -1,21 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useKerfStore } from '../store/useKerfStore';
 import { downloadSTLExport } from '../geometry/stlExporter';
+import { parseSTEPFile } from '../geometry/stepParser';
 import { ProjectManagerModal } from './ProjectManagerModal';
-import { Box, Layers, Edit3, HardDrive, Download, Sparkles, Printer } from 'lucide-react';
-import type { ModelPreset } from '../types/cad';
+import { Box, Layers, HardDrive, Download, Printer, FolderInput } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const {
     activeTab,
     setActiveTab,
-    selectedPreset,
-    setSelectedPreset,
     exportProjectJSON,
     parts,
+    setParts,
+    setMaterial,
+    setKerfSettings,
+    setJointConfig,
+    material,
   } = useKerfStore();
 
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDownloadProject = () => {
     const jsonStr = exportProjectJSON();
@@ -23,17 +27,61 @@ export const Header: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `kerfsoft_project_${selectedPreset}.kerf`;
+    a.download = 'kerfsoft_project.kerf';
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const handleExportSTL = () => {
-    downloadSTLExport(parts, `kerfsoft_${selectedPreset}_3d.stl`);
+    downloadSTLExport(parts, 'kerfsoft_3d.stl');
+  };
+
+  const handleImportFileClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const fileName = file.name.toLowerCase();
+    const fileText = await file.text();
+
+    if (fileName.endsWith('.kerf') || fileName.endsWith('.json')) {
+      try {
+        const parsed = JSON.parse(fileText);
+        if (parsed.material) setMaterial(parsed.material);
+        if (parsed.kerfSettings) setKerfSettings(parsed.kerfSettings);
+        if (parsed.jointConfig) setJointConfig(parsed.jointConfig);
+        if (parsed.parts) setParts(parsed.parts);
+      } catch (err) {
+        console.error('Failed to parse .kerf file:', err);
+      }
+    } else if (fileName.endsWith('.step') || fileName.endsWith('.stp')) {
+      try {
+        const importedParts = parseSTEPFile(fileText, material.thickness, material.color);
+        setParts(importedParts);
+      } catch (err) {
+        console.error('Failed to parse STEP file:', err);
+      }
+    }
+
+    // Reset input value so the same file can be re-imported
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
     <>
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept=".kerf,.step,.stp,.json"
+        className="hidden"
+      />
+
       <header className="h-14 bg-slate-900 border-b border-slate-800 px-4 flex items-center justify-between shadow-lg select-none z-30">
         {/* Brand Logo & Title */}
         <div className="flex items-center gap-3">
@@ -43,34 +91,18 @@ export const Header: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <span className="font-extrabold text-base tracking-tight bg-gradient-to-r from-amber-400 via-rose-300 to-sky-400 bg-clip-text text-transparent">
-                KERFSOFT 3D
+                KERFSOFT
               </span>
               <span className="bg-sky-950 text-sky-400 border border-sky-800/80 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">
-                v1.0 RAM
+                v0.1.1-beta
               </span>
             </div>
             <p className="text-[10px] text-slate-400 font-medium">Wood & Kerf Puzzle CAD Platform</p>
           </div>
         </div>
 
-        {/* Preset Model Selector & Navigation Tabs */}
+        {/* Navigation Tabs */}
         <div className="flex items-center gap-4">
-          {/* Preset Selector */}
-          <div className="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span className="text-xs text-slate-400 font-medium">MODEL:</span>
-            <select
-              value={selectedPreset}
-              onChange={(e) => setSelectedPreset(e.target.value as ModelPreset)}
-              className="bg-transparent text-xs font-semibold text-slate-200 focus:outline-none cursor-pointer"
-            >
-              <option value="storage_crate" className="bg-slate-900">Parametric Storage Box (Finger Joints)</option>
-              <option value="puzzle_cube" className="bg-slate-900">3D Interlocking Burr Puzzle</option>
-              <option value="phone_stand" className="bg-slate-900">Interlocking Phone Stand</option>
-              <option value="custom_sketch" className="bg-slate-900">Custom 2D Sketch Panel</option>
-            </select>
-          </div>
-
           {/* Workspace Tab Switcher */}
           <div className="flex items-center bg-slate-950 border border-slate-800 rounded-lg p-1 gap-1">
             <button
@@ -83,18 +115,6 @@ export const Header: React.FC = () => {
             >
               <Box className="w-3.5 h-3.5" />
               3D CAD Viewport
-            </button>
-
-            <button
-              onClick={() => setActiveTab('2d_sketch')}
-              className={`flex items-center gap-2 px-3 py-1 rounded text-xs font-semibold transition ${
-                activeTab === '2d_sketch'
-                  ? 'bg-amber-600 text-white shadow'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
-              }`}
-            >
-              <Edit3 className="w-3.5 h-3.5" />
-              2D Sketcher
             </button>
 
             <button
@@ -111,16 +131,26 @@ export const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Controls: Local OPFS Manager & Export 3D STL */}
+        {/* Right Controls: Local Storage, Import STEP/KERF, Export 3D STL */}
         <div className="flex items-center gap-3">
-          {/* Local-First OPFS Storage Button */}
+          {/* Import STEP / KERF File */}
+          <button
+            onClick={handleImportFileClick}
+            className="flex items-center gap-2 px-3 py-1.5 bg-sky-950 hover:bg-sky-900 text-sky-300 border border-sky-800/80 rounded-lg text-xs font-semibold transition active:scale-95 shadow-sm"
+            title="Import .STEP or .KERF CAD File"
+          >
+            <FolderInput className="w-3.5 h-3.5 text-sky-400" />
+            <span>Import STEP / KERF</span>
+          </button>
+
+          {/* Local Storage Button */}
           <button
             onClick={() => setIsProjectModalOpen(true)}
             className="flex items-center gap-2 bg-slate-950 border border-emerald-900/80 hover:border-emerald-500 px-3 py-1.5 rounded-lg text-xs font-mono text-emerald-400 transition"
-            title="OPFS Local Storage Project Manager"
+            title="Local Storage Project Manager"
           >
             <HardDrive className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-            <span>OPFS STORAGE</span>
+            <span>LOCAL STORAGE</span>
           </button>
 
           {/* Export 3D STL File */}

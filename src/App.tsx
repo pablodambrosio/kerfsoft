@@ -2,7 +2,6 @@
 import { Header } from './components/Header';
 import { FeatureTree } from './components/FeatureTree';
 import { CADViewport } from './components/CADViewport';
-import { SketchEditor } from './components/SketchEditor';
 import { NestingView } from './components/NestingView';
 import { Inspector } from './components/Inspector';
 import { AssemblyToolbar } from './components/AssemblyToolbar';
@@ -18,24 +17,24 @@ export function App() {
 
       {/* Main Workspace Area */}
       <div className="flex-1 flex overflow-hidden relative">
-        {/* Left Sidebar: Parametric Feature Tree */}
+        {/* Left Sidebar: Components Panel */}
         <FeatureTree />
 
         {/* Central Viewport Area */}
-        <main className="flex-1 relative overflow-hidden bg-slate-950">
+        <main className="flex-1 flex flex-col relative overflow-hidden bg-slate-950">
           {activeTab === '3d_cad' ? (
             <>
-              <CADViewport />
+              <div className="flex-1 relative overflow-hidden">
+                <CADViewport />
+              </div>
               <AssemblyToolbar />
             </>
-          ) : activeTab === '2d_sketch' ? (
-            <SketchEditor />
           ) : (
             <NestingView />
           )}
         </main>
 
-        {/* Right Sidebar: Parametric Inspector & Kerf Settings */}
+        {/* Right Sidebar: Properties Panel */}
         <Inspector />
       </div>
     </div>
@@ -43,3 +42,4 @@ export function App() {
 }
 
 export default App;
+

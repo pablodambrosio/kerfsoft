@@ -35,7 +35,7 @@ export function generateBinarySTL(parts: WoodPart[], settings?: KerfSettings): A
   const dataView = new DataView(buffer);
 
   // Write 80-byte ASCII Header
-  const headerStr = 'KERFSOFT 3D CAD Binary STL Exporter';
+  const headerStr = 'KERFSOFT CAD Binary STL Exporter';
   for (let i = 0; i < 80; i++) {
     dataView.setUint8(i, i < headerStr.length ? headerStr.charCodeAt(i) : 32);
   }

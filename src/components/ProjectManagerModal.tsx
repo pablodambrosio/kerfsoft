@@ -15,9 +15,9 @@ interface ProjectManagerModalProps {
 }
 
 export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({ isOpen, onClose }) => {
-  const { exportProjectJSON, selectedPreset } = useKerfStore();
+  const { exportProjectJSON } = useKerfStore();
   const [opfsProjects, setOpfsProjects] = useState<OPFSProjectMeta[]>([]);
-  const [newProjectName, setNewProjectName] = useState(`kerfsoft_${selectedPreset}`);
+  const [newProjectName, setNewProjectName] = useState('kerfsoft_project');
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
 
   const refreshProjectList = async () => {
@@ -26,9 +26,15 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({ isOpen
   };
 
   useEffect(() => {
+    let isMounted = true;
     if (isOpen) {
-      refreshProjectList();
+      listOPFSProjects().then((list) => {
+        if (isMounted) setOpfsProjects(list);
+      });
     }
+    return () => {
+      isMounted = false;
+    };
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -49,17 +55,14 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({ isOpen
     if (jsonStr) {
       try {
         const parsed = JSON.parse(jsonStr);
-        if (parsed.preset) {
-          useKerfStore.getState().setSelectedPreset(parsed.preset);
-        }
         if (parsed.material) {
           useKerfStore.getState().setMaterial(parsed.material);
         }
         if (parsed.kerfSettings) {
           useKerfStore.getState().setKerfSettings(parsed.kerfSettings);
         }
-        if (parsed.crateDimensions) {
-          useKerfStore.getState().setCrateDimensions(parsed.crateDimensions);
+        if (parsed.parts) {
+          useKerfStore.getState().setParts(parsed.parts);
         }
         setSaveSuccessMsg(`Loaded '${filename}' successfully!`);
         setTimeout(() => setSaveSuccessMsg(''), 3000);
@@ -87,8 +90,8 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({ isOpen
               <HardDrive className="w-4 h-4 animate-pulse" />
             </div>
             <div>
-              <h3 className="font-bold text-sm text-slate-100">OPFS LOCAL STORAGE MANAGER</h3>
-              <p className="text-[10px] font-mono text-emerald-400">100% In-Browser Memory File Persistence</p>
+              <h3 className="font-bold text-sm text-slate-100">LOCAL STORAGE MANAGER</h3>
+              <p className="text-[10px] font-mono text-emerald-400">100% In-Browser Local File Persistence</p>
             </div>
           </div>
 
@@ -111,7 +114,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({ isOpen
 
           {/* Save Current Project Section */}
           <div className="space-y-2">
-            <label className="text-xs text-slate-400 font-semibold block">Save Active Project to OPFS</label>
+            <label className="text-xs text-slate-400 font-semibold block">Save Active Project to Local Storage</label>
             <div className="flex gap-2">
               <input
                 type="text"
@@ -130,10 +133,10 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({ isOpen
             </div>
           </div>
 
-          {/* OPFS Saved Files List */}
+          {/* Saved Files List */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs font-semibold text-slate-400 border-b border-slate-800 pb-1">
-              <span>SAVED OPFS PROJECTS ({opfsProjects.length})</span>
+              <span>SAVED LOCAL PROJECTS ({opfsProjects.length})</span>
               <Clock className="w-3.5 h-3.5" />
             </div>
 
@@ -172,7 +175,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({ isOpen
             ) : (
               <div className="bg-slate-950/60 border border-slate-800/80 rounded-lg p-6 text-center text-xs text-slate-500">
                 <FolderOpen className="w-8 h-8 mx-auto mb-2 text-slate-700" />
-                <p>No saved projects in OPFS storage yet. Type a name above and click 'Save Local'!</p>
+                <p>No saved projects in local storage yet. Type a name above and click 'Save Local'!</p>
               </div>
             )}
           </div>

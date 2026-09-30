@@ -105,11 +105,13 @@ export const CADViewport: React.FC = () => {
     };
     window.addEventListener('resize', handleResize);
 
+    const container = containerRef.current;
+
     return () => {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
-      if (renderer.domElement && containerRef.current) {
-        containerRef.current.removeChild(renderer.domElement);
+      if (renderer.domElement && container) {
+        container.removeChild(renderer.domElement);
       }
       renderer.dispose();
     };
@@ -131,12 +133,8 @@ export const CADViewport: React.FC = () => {
       }
     }
 
-    // Build new 3D meshes for each WoodPart
     parts.forEach((part) => {
-      const geometry = createWoodPartGeometry(
-        part,
-        viewMode === 'kerf_preview' ? kerfSettings : undefined
-      );
+      const geometry = createWoodPartGeometry(part);
 
       const isSelected = part.id === selectedPartId;
       const isWireframe = viewMode === 'wireframe';

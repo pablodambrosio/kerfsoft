@@ -68,8 +68,6 @@ export interface WoodPart {
   isInterlocking?: boolean;
 }
 
-export type ModelPreset = 'storage_crate' | 'puzzle_cube' | 'phone_stand' | 'custom_sketch';
-
 export interface NestingSheet {
   width: number; // e.g. 600 mm
   height: number; // e.g. 400 mm
@@ -88,4 +86,5 @@ export interface NestedPartPlacement {
   profile: Part2DProfile;
 }
 
-export type ActiveTab = '3d_cad' | '2d_sketch' | '2d_nesting' | 'assembly_sim';
+export type ActiveTab = '3d_cad' | '2d_nesting' | 'assembly_sim';
+

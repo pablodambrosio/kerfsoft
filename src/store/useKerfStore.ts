@@ -4,36 +4,19 @@ import type {
   MaterialConfig,
   KerfSettings,
   JointConfig,
-  ModelPreset,
   ActiveTab,
   NestingSheet,
   NestedPartPlacement
 } from '../types/cad';
-import {
-  MATERIAL_PRESETS,
-  generateStorageCratePreset,
-  generateBurrPuzzlePreset,
-  generatePhoneStandPreset,
-} from '../geometry/kerfEngine';
-import type { SketchProfile, EdgeJointSettings } from '../types/sketch';
-import { createDefaultRectangleSketch, convertSketchToWoodPart } from '../geometry/sketchKernel';
+import { MATERIAL_PRESETS } from '../geometry/kerfEngine';
 
 interface KerfState {
   // Navigation & View Mode
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
-  selectedPreset: ModelPreset;
-  setSelectedPreset: (preset: ModelPreset) => void;
 
-  // Custom 2D Sketch State
-  activeSketch: SketchProfile;
-  selectedEdgeId: string | null;
-  setSelectedEdgeId: (id: string | null) => void;
-  updateEdgeJoint: (edgeId: string, jointSettings: Partial<EdgeJointSettings>) => void;
-  updateSketchVertex: (vertexId: string, x: number, y: number) => void;
-
-  viewMode: 'shaded' | 'wireframe' | 'kerf_preview';
-  setViewMode: (mode: 'shaded' | 'wireframe' | 'kerf_preview') => void;
+  viewMode: 'shaded' | 'wireframe';
+  setViewMode: (mode: 'shaded' | 'wireframe') => void;
 
   explodedViewFactor: number;
   setExplodedViewFactor: (factor: number) => void;
@@ -51,11 +34,9 @@ interface KerfState {
   jointConfig: JointConfig;
   setJointConfig: (joint: Partial<JointConfig>) => void;
 
-  crateDimensions: { length: number; width: number; height: number };
-  setCrateDimensions: (dims: Partial<{ length: number; width: number; height: number }>) => void;
-
   // Computed Parts & Nesting Layout
   parts: WoodPart[];
+  setParts: (parts: WoodPart[]) => void;
   nestingSheet: NestingSheet;
   placements: NestedPartPlacement[];
   
@@ -68,44 +49,6 @@ interface KerfState {
 export const useKerfStore = create<KerfState>((set, get) => ({
   activeTab: '3d_cad',
   setActiveTab: (activeTab) => set({ activeTab }),
-
-  selectedPreset: 'storage_crate',
-  setSelectedPreset: (selectedPreset) => {
-    set({ selectedPreset });
-    get().rebuildParts();
-  },
-
-  // Custom 2D Sketch State
-  activeSketch: createDefaultRectangleSketch(120, 90),
-  selectedEdgeId: null,
-  setSelectedEdgeId: (selectedEdgeId) => set({ selectedEdgeId }),
-
-  updateEdgeJoint: (edgeId, jointSettings) => {
-    set((state) => {
-      const newEdges = state.activeSketch.edges.map((e) => {
-        if (e.id === edgeId) {
-          return { ...e, joint: { ...e.joint, ...jointSettings } };
-        }
-        return e;
-      });
-      return {
-        activeSketch: { ...state.activeSketch, edges: newEdges },
-      };
-    });
-    get().rebuildParts();
-  },
-
-  updateSketchVertex: (vertexId, x, y) => {
-    set((state) => {
-      const newVertices = state.activeSketch.vertices.map((v) =>
-        v.id === vertexId ? { ...v, x, y } : v
-      );
-      return {
-        activeSketch: { ...state.activeSketch, vertices: newVertices },
-      };
-    });
-    get().rebuildParts();
-  },
 
   viewMode: 'shaded',
   setViewMode: (viewMode) => set({ viewMode }),
@@ -154,19 +97,11 @@ export const useKerfStore = create<KerfState>((set, get) => ({
     get().rebuildParts();
   },
 
-  crateDimensions: {
-    length: 140,
-    width: 100,
-    height: 80,
-  },
-  setCrateDimensions: (newDims) => {
-    set((state) => ({
-      crateDimensions: { ...state.crateDimensions, ...newDims }
-    }));
-    get().rebuildParts();
-  },
-
   parts: [],
+  setParts: (parts) => {
+    set({ parts });
+    get().rebuildNesting();
+  },
 
   nestingSheet: {
     width: 600,
@@ -177,22 +112,8 @@ export const useKerfStore = create<KerfState>((set, get) => ({
 
   placements: [],
 
-  // Re-evaluates 3D parts based on active parameters
+  // Re-evaluates nesting for active parts
   rebuildParts: () => {
-    const { selectedPreset, crateDimensions, material, jointConfig, activeSketch } = get();
-    let newParts: WoodPart[] = [];
-
-    if (selectedPreset === 'storage_crate') {
-      newParts = generateStorageCratePreset(crateDimensions, material, jointConfig);
-    } else if (selectedPreset === 'puzzle_cube') {
-      newParts = generateBurrPuzzlePreset(material);
-    } else if (selectedPreset === 'phone_stand') {
-      newParts = generatePhoneStandPreset(material);
-    } else if (selectedPreset === 'custom_sketch') {
-      newParts = [convertSketchToWoodPart(activeSketch, material.thickness, material.color)];
-    }
-
-    set({ parts: newParts });
     get().rebuildNesting();
   },
 
@@ -243,16 +164,15 @@ export const useKerfStore = create<KerfState>((set, get) => ({
   },
 
   exportProjectJSON: () => {
-    const { selectedPreset, material, kerfSettings, jointConfig, crateDimensions } = get();
+    const { material, kerfSettings, jointConfig, parts } = get();
     return JSON.stringify(
       {
         version: '1.0.0',
-        generator: 'Kerfsoft 3D CAD',
-        preset: selectedPreset,
+        generator: 'Kerfsoft CAD',
         material,
         kerfSettings,
         jointConfig,
-        crateDimensions,
+        parts,
       },
       null,
       2
@@ -262,3 +182,5 @@ export const useKerfStore = create<KerfState>((set, get) => ({
 
 // Initialize initial parts on load
 useKerfStore.getState().rebuildParts();
+
+
