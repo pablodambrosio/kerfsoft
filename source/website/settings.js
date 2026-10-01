@@ -31,10 +31,10 @@ export class Settings
 
     LoadFromCookies ()
     {
-        this.themeId = CookieGetIntVal ('ov_theme_id', GetPreferredColorScheme ());
+        this.themeId = CookieGetIntVal ('ov_theme_id', Theme.Dark);
         this.environmentMapName = CookieGetStringVal ('ov_environment_map', 'fishermans_bastion');
         this.backgroundIsEnvMap = CookieGetBoolVal ('ov_background_is_envmap', false);
-        this.backgroundColor = CookieGetRGBAColorVal ('ov_background_color', new RGBAColor (255, 255, 255, 255));
+        this.backgroundColor = CookieGetRGBAColorVal ('ov_background_color', new RGBAColor (42, 43, 46, 255));
         this.defaultLineColor = CookieGetRGBColorVal ('ov_default_line_color', new RGBColor (100, 100, 100));
         this.defaultColor = CookieGetRGBColorVal ('ov_default_color', new RGBColor (200, 200, 200));
         this.edgeSettings.showEdges = CookieGetBoolVal ('ov_show_edges', false);

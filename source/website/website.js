@@ -184,7 +184,7 @@ export class Website
     constructor (parameters)
     {
         this.parameters = parameters;
-        this.settings = new Settings (Theme.Light);
+        this.settings = new Settings (Theme.Dark);
         this.cameraSettings = new CameraSettings ();
         this.viewer = new Viewer ();
         this.measureTool = new MeasureTool (this.viewer, this.settings);
@@ -742,16 +742,7 @@ export class Website
             });
         });
 
-        let selectedTheme = (this.settings.themeId === Theme.Light ? 1 : 0);
-        AddRadioButton (this.toolbar, ['dark_mode', 'light_mode'], [Loc ('Dark mode'), Loc ('Light mode')], selectedTheme, ['align_right'], (buttonIndex) => {
-            if (buttonIndex === 0) {
-                this.settings.themeId = Theme.Dark;
-            } else if (buttonIndex === 1) {
-                this.settings.themeId = Theme.Light;
-            }
-            HandleEvent ('theme_changed', this.settings.themeId === Theme.Light ? 'light' : 'dark');
-            this.SwitchTheme (this.settings.themeId, true);
-        });
+        // Theme controller toggle removed - Dark theme default enabled
 
         this.parameters.fileInput.addEventListener ('change', (ev) => {
             if (ev.target.files.length > 0) {

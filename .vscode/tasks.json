@@ -3,6 +3,23 @@
     "tasks": [
         {
             "type": "npm",
+            "script": "start",
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "custom",
+                "pattern": {
+                    "regexp": "^$"
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".*",
+                    "endsPattern": "Available on:"
+                }
+            },
+            "label": "npm: start"
+        },
+        {
+            "type": "npm",
             "script": "build_website_dev",
             "group": {
                 "kind": "build",

@@ -16,12 +16,12 @@ def CreateWebsite (rootDir, websiteDir, version, testBuild):
 	if not os.path.exists (websiteDir):
 		os.makedirs (websiteDir)
 
-	shutil.copy2 (os.path.join (rootDir, 'website', 'index.html'), websiteDir)
-	shutil.copy2 (os.path.join (rootDir, 'website', 'embed.html'), websiteDir)
-	shutil.copy2 (os.path.join (rootDir, 'website', 'robots.txt'), websiteDir)
+	shutil.copy2 (os.path.join (rootDir, 'app', 'index.html'), websiteDir)
+	shutil.copy2 (os.path.join (rootDir, 'app', 'embed.html'), websiteDir)
+	shutil.copy2 (os.path.join (rootDir, 'app', 'robots.txt'), websiteDir)
 	shutil.copytree (os.path.join (rootDir, 'build', 'website'), os.path.join (websiteDir, 'o3dv'))
-	shutil.copytree (os.path.join (rootDir, 'website', 'assets'), os.path.join (websiteDir, 'assets'))
-	shutil.copytree (os.path.join (rootDir, 'website', 'info'), os.path.join (websiteDir, 'info'))
+	shutil.copytree (os.path.join (rootDir, 'app', 'assets'), os.path.join (websiteDir, 'assets'))
+	shutil.copytree (os.path.join (rootDir, 'app', 'info'), os.path.join (websiteDir, 'info'))
 
 	pluginFiles = []
 	pluginsDir = os.path.join (rootDir, 'plugins')

@@ -29,8 +29,10 @@ div.title div.title_left
 
 div.title svg.logo_image
 {
-	width: 190px;
-	height: 40px;
+	width: 165px;
+	height: 36px;
+	padding: 4px;
+	box-sizing: border-box;
 	float: left;
 }
 
@@ -111,6 +113,7 @@ div.intro div.intro_file_formats
 	margin: 0px auto;
 }
 
+div.intro div.intro_file_formats span,
 div.intro div.intro_file_formats a
 {
 	color: var(--ov_outline_button_text_color);
@@ -122,7 +125,7 @@ div.intro div.intro_file_formats a
 	margin: 6px 4px;
 	border: 1px solid var(--ov_outline_button_color);
 	display: inline-block;
-	cursor: pointer;
+	cursor: default;
 }
 
 div.intro div.intro_file_formats a:hover

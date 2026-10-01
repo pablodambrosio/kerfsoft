@@ -2,19 +2,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "node",
+            "type": "chrome",
             "request": "launch",
-            "name": "Test",
-            "program": "${workspaceFolder}/node_modules/mocha/bin/mocha",
-            "cwd": "${workspaceRoot}",
-            "args": ["--no-timeouts", "--colors"]
+            "name": "Launch Chrome with App",
+            "url": "http://localhost:8080/app/index.html",
+            "webRoot": "${workspaceFolder}",
+            "preLaunchTask": "npm: start"
         },
         {
-            "type": "pwa-chrome",
+            "type": "node",
             "request": "launch",
-            "name": "Chrome",
-            "url": "http://localhost:8080/website",
-            "webRoot": "${workspaceFolder}"
+            "name": "Test (Mocha)",
+            "program": "${workspaceFolder}/node_modules/mocha/bin/mocha",
+            "cwd": "${workspaceRoot}",
+            "args": [
+                "--no-timeouts",
+                "--colors"
+            ]
         }
     ]
 }
