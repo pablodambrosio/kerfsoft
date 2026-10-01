@@ -16,6 +16,7 @@ import { ThreeModelLoaderUI } from './threemodelloaderui.js';
 import { Toolbar } from './toolbar.js';
 import { DownloadModel, ShowExportDialog } from './exportdialog.js';
 import { ShowSnapshotDialog } from './snapshotdialog.js';
+import { ShowCutLayoutDialog } from './cutlayoutdialog.js';
 import { AddSvgIconElement, GetFilesFromDataTransfer, InstallTooltip, IsSmallWidth } from './utils.js';
 import { ShowOpenUrlDialog } from './openurldialog.js';
 import { ShowSharingDialog } from './sharingdialog.js';
@@ -699,6 +700,14 @@ export class Website
             this.cameraSettings.SaveToCookies ();
             this.viewer.SetProjectionMode (this.cameraSettings.projectionMode);
             this.sidebar.UpdateControlsVisibility ();
+        });
+        AddButton (this.toolbar, 'flat_list', Loc ('2D Cut Layout'), ['only_full_width', 'only_on_model'], () => {
+            HandleEvent ('cut_layout_opened', '');
+            ShowCutLayoutDialog (this.model, {
+                isMeshVisible : (meshInstanceId) => {
+                    return this.navigator.IsMeshVisible (meshInstanceId);
+                }
+            });
         });
         AddSeparator (this.toolbar, ['only_full_width', 'only_on_model']);
         let measureToolButton = AddPushButton (this.toolbar, 'measure', Loc ('Measure'), ['only_full_width', 'only_on_model'], (isSelected) => {

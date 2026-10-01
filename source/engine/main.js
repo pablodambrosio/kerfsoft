@@ -13,6 +13,7 @@ import { ExporterOff } from './export/exporteroff.js';
 import { ExporterPly } from './export/exporterply.js';
 import { ExporterStl } from './export/exporterstl.js';
 import { Box3D, BoundingBoxCalculator3D } from './geometry/box3d.js';
+import { FlattenedPiece, FlattenResult, ComponentFlattener } from './geometry/componentflattener.js';
 import { Coord2D, CoordIsEqual2D, AddCoord2D, SubCoord2D, CoordDistance2D, DotVector2D } from './geometry/coord2d.js';
 import { Coord3D, CoordIsEqual3D, AddCoord3D, SubCoord3D, CoordDistance3D, DotVector3D, VectorAngle3D, CrossVector3D, VectorLength3D, ArrayToCoord3D } from './geometry/coord3d.js';
 import { Coord4D } from './geometry/coord4d.js';
@@ -107,6 +108,9 @@ export {
     ExporterStl,
     Box3D,
     BoundingBoxCalculator3D,
+    FlattenedPiece,
+    FlattenResult,
+    ComponentFlattener,
     Coord2D,
     CoordIsEqual2D,
     AddCoord2D,
