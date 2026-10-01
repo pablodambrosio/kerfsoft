@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="icon" type="image/png" href="assets/images/kerfsoft_favicon.png">
+
+    <title>KerfSoft - 3D CAD & Studio</title>
+
+    <!-- website start -->
+    <link rel="stylesheet" type="text/css" href="../build/website_dev/o3dv.website.min.css">
+    <script type="text/javascript" src="../build/website_dev/o3dv.website.min.js"></script>
+    <!-- website end -->
+
+    <!-- website analytics start -->
+    <script type="text/javascript">
+        OV.SetWebsiteEventHandler ((eventName, eventLabel, eventParams) => {
+            console.log ({
+                eventName : eventName,
+                eventLabel : eventLabel,
+                eventParams : eventParams
+            });
+        });
+    </script>
+    <!-- website analytics end -->
+
+    <script type="text/javascript">
+        OV.StartWebsite ();
+    </script>
+
+</head>
+
+<body>
+    <input type="file" id="open_file" style="display:none;" multiple></input>
+    <div class="header" id="header">
+        <div class="title">
+            <div class="title_left">
+                <a href="index.html" style="text-decoration:none; display:flex; align-items:center; gap:10px; padding:4px 8px;">
+                    <img src="assets/images/kerfsoft_logo.png" alt="KerfSoft Logo" style="height:32px; width:auto; display:block;" />
+                    <div class="logo_text" style="font-size:22px; font-weight:800; letter-spacing:-0.5px; line-height:1;">
+                        <span style="color:#0284c7;">Kerf</span><span style="color:var(--ov_foreground_color);">Soft</span>
+                    </div>
+                </a>
+            </div>
+            <div class="title_right" id="header_buttons"></div>
+            <div class="main_file_name only_full_width" id="main_file_name"></div>
+        </div>
+        <div class="toolbar" id="toolbar"></div>
+    </div>
+    <div class="main" id="main">
+        <div class="main_left_container only_full_width" id="main_left_container">
+            <div class="main_navigator ov_panel_set_container" id="main_navigator"></div>
+            <div class="main_splitter" id="main_navigator_splitter"></div>
+        </div>
+        <div class="main_viewer" id="main_viewer"></div>
+        <div class="main_right_container only_full_width" id="main_right_container">
+            <div class="main_splitter" id="main_sidebar_splitter"></div>
+            <div class="main_sidebar ov_panel_set_right_container" id="main_sidebar"></div>
+        </div>
+    </div>
+    <div class="intro ov_thin_scrollbar" id="intro">
+        <div class="intro_content" id="intro_content" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px;">
+            <div class="intro_logo" style="border-bottom:none; margin-bottom:10px; padding-bottom:0px; display:flex; flex-direction:column; align-items:center;">
+                <img src="assets/images/kerfsoft_logo.png" alt="KerfSoft Logo" style="height:96px; width:auto; margin-bottom:18px; filter:drop-shadow(0 4px 12px rgba(2, 132, 199, 0.2));" />
+                <div style="font-size:48px; font-weight:800; letter-spacing:-1px; margin-bottom:15px; font-family:sans-serif;">
+                    <span style="color:#0284c7;">Kerf</span><span style="color:var(--ov_foreground_color);">Soft</span>
+                </div>
+                <div class="intro_dragdrop_text" id="intro_dragdrop_text" style="font-size:22px; font-weight:500; color:var(--ov_foreground_color); margin-top:10px;">
+                    Drag and drop 3D CAD models here
+                </div>
+                <div style="font-size:14px; opacity:0.7; margin-top:8px; color:var(--ov_foreground_color);">
+                    Supports STEP, IGES, STL, OBJ, 3DM, GLTF & BREP files
+                </div>
+                <div id="intro_formats_title" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+
+

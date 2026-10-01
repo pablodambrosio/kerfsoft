@@ -59,7 +59,8 @@ export const Header: React.FC = () => {
       }
     } else if (fileName.endsWith('.step') || fileName.endsWith('.stp')) {
       try {
-        const importedParts = parseSTEPFile(fileText, material.thickness, material.color);
+        const fileBuffer = new Uint8Array(await file.arrayBuffer());
+        const importedParts = await parseSTEPFile(fileBuffer, material.thickness, material.color);
         setParts(importedParts);
       } catch (err) {
         console.error('Failed to parse STEP file:', err);
