@@ -57,14 +57,8 @@ export function StartWebsite ()
             return;
         }
 
-        const dragDropElem = document.getElementById ('intro_dragdrop_text');
-        if (dragDropElem) {
-            dragDropElem.innerHTML = Loc ('Drag and drop 3D models here.');
-        }
-        const formatsTitleElem = document.getElementById ('intro_formats_title');
-        if (formatsTitleElem) {
-            formatsTitleElem.innerHTML = Loc ('Check an example file:');
-        }
+        document.getElementById ('intro_dragdrop_text').innerHTML = Loc ('Drag and drop 3D models here.');
+        document.getElementById ('intro_formats_title').innerHTML = Loc ('Check an example file:');
 
         let website = new Website ({
             headerDiv : document.getElementById ('header'),

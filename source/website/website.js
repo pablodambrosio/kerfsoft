@@ -659,6 +659,13 @@ export class Website
         AddButton (this.toolbar, 'open', Loc ('Open from your device'), [], () => {
             this.OpenFileBrowserDialog ();
         });
+        AddButton (this.toolbar, 'open_url', Loc ('Open from url'), [], () => {
+            ShowOpenUrlDialog ((urls) => {
+                if (urls.length > 0) {
+                    this.hashHandler.SetModelFilesToHash (urls);
+                }
+            });
+        });
         AddSeparator (this.toolbar, ['only_on_model']);
         AddButton (this.toolbar, 'fit', Loc ('Fit model to window'), ['only_on_model'], () => {
             this.FitModelToWindow (false);
